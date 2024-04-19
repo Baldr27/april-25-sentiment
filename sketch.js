@@ -16,12 +16,13 @@ const comentarios = [
   { "texto": "Me siento tan afortunado de tener personas increíbles en mi vida." },
   { "texto": "Este pastel de chocolate es simplemente celestial. ¡Me hace tan feliz!" },
   { "texto": "Cada vez que veo a mi hijo sonreír, todo en el mundo parece correcto." },
-  { "texto": "La música siempre me levanta el ánimo, especialmente esta canción." },
-  { "texto": "Estoy emocionado por lo que el futuro me depara. Todo es posible." },
-  { "texto": "La risa es contagiosa, y hoy he reído más de lo que he llorado." },
-  { "texto": "El amor incondicional de mi mascota siempre me hace sentir cálido y feliz." },
-  { "texto": "A veces, la felicidad está en las pequeñas cosas, como una taza de té caliente en una tarde fría." },
-  { "texto": "Despertar sintiéndome renovado y listo para enfrentar el día es una sensación maravillosa." },
+  { "texto": "No puedo evitar sentirme triste cuando pienso en las personas que ya no están con nosotros." },
+  { "texto": "A veces, la soledad se siente abrumadora, y es difícil sacudirse esa sensación." },
+  { "texto": "Extraño los días de verano cuando todo era más simple y sin preocupaciones." },
+  { "texto": "Es difícil mantener una sonrisa cuando el mundo parece estar en caos." },
+  { "texto": "La tristeza parece envolverme como una manta en estos días oscuros." },
+  { "texto": "La pérdida de un ser querido deja un vacío que nunca parece llenarse." },
+  { "texto": "A veces, simplemente necesito un abrazo para sentirme un poco mejor." },
 ];
 
 let comentariosAnalizados = [];
@@ -35,17 +36,26 @@ function setup(){
   statusEl = createP('Loading Model...');
   inputBox = createInput('Today is the happiest day and is full of rainbows!');
   inputBox.attribute('size', '75');
-  submitButton = createButton('submit');
-  sentimentResult = createP('sentiment score:');
+  submitButton = createButton('Obtener puntajes');
+  submitButton.mousePressed(analizeCommentsSentiments);
+}
 
-  submitButton.mousePressed(getSentiment);
+function analizeCommentsSentiments(error){
+  if(error){
+    console.log(error)
+  }else {
+    for (let i=0; i<comentarios.length; i++){
+      getSentiment(comentarios[i].texto)
+    }
+  }
 }
 
 function getSentiment(comment){
   prediction = sentiment.predict(comment);
-  sentimentResult.html(`Sentiment score: ${prediction.score}`);
-  comentariosAnalizados.push([comment,prediction.score])
+  console.log("Comentario: " +comment + " Puntaje: "+prediction.score);
+  comentariosAnalizados.push({ comentario: comment, puntaje: prediction.score });
 }
+
 
 function modelReady(){
   statusEl.html('Model Loaded');
