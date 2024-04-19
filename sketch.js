@@ -4,6 +4,8 @@ let submitButton;
 let inputBox;
 let sentimentResult;
 let prediction;
+let token = AIzaSyDZ9MqeC6ebJXBJNY5X1kACBpHCmUaJtCM;
+
 const comentarios = [
   { "texto": "¡Hoy es el mejor día de mi vida! Me siento increíblemente feliz." },
   { "texto": "No puedo dejar de sonreír. Todo está saliendo perfectamente." },
