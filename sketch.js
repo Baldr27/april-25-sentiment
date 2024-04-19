@@ -17,3 +17,15 @@ function setup(){
 
   submitButton.mousePressed(getSentiment);
 }
+
+function getSentiment(){
+  const text = inputBox.value();
+
+  const prediction = sentiment.predict(text);
+
+  sentimentResult.html(`Sentiment score: ${prediction.score}`);
+}
+
+function modelReady(){
+  statusEl.html('Model Loaded');
+}
