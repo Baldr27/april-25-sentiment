@@ -4,12 +4,7 @@ let submitButton;
 let inputBox;
 let sentimentResult;
 let prediction;
-<<<<<<< Updated upstream
-let token = AIzaSyDZ9MqeC6ebJXBJNY5X1kACBpHCmUaJtCM;
-
-=======
 let dibujar = true;
->>>>>>> Stashed changes
 const comentarios = [
   { "texto": "¡Hoy es el mejor día de mi vida! Me siento increíblemente feliz.A veces, simplemente necesito un abrazo para sentirme un poco mejorA veces, simplemente necesito un abrazo para sentirme un poco mejorA veces, simplemente necesito un abrazo para sentirme un poco mejorA veces, simplemente necesito un abrazo para sentirme un poco mejorA veces, simplemente necesito un abrazo para sentirme un poco mejorA veces, simplemente necesito un abrazo para sentirme un poco mejor" },
   { "texto": "No puedo dejar de sonreír. Todo está saliendo perfectamente." },
