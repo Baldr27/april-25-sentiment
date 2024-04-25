@@ -1,6 +1,6 @@
 let sentiment;
 let statusEl;
-let submitButton;
+let scoreButton;
 let inputBox;
 let sentimentResult;
 let prediction;
@@ -8,7 +8,7 @@ let dibujar = true;
 let apiRequest;
 let comentarios = [];
 let inputLink;
-let calcularButton;
+let loadButton;
 let comentariosAnalizados = [];
 
 const getData = async () => {
@@ -38,18 +38,18 @@ function setup() {
   statusEl = createP('Loading Model...');
   inputLink = createInput('Id de video');
   videoId = inputLink.value;
-  calcularButton=createButton('Cargar video')
-  calcularButton.addClass('btn btn-outline-success text-dark')
-  calcularButton.mousePressed(async function(){
+  loadButton=createButton('Cargar video')
+  loadButton.addClass('btn btn-outline-success text-dark')
+  loadButton.mousePressed(async function(){
     try {
       await getData();
     } catch (error) {
       console.log(error);
     }
   })
-  submitButton = createButton('Obtener puntajes');
-  submitButton.mousePressed(analizeCommentsSentiments);
-  submitButton.addClass('btn btn-outline-primary text-dark')
+  scoreButton = createButton('Obtener puntajes');
+  scoreButton.mousePressed(analizeCommentsSentiments);
+  scoreButton.addClass('btn btn-outline-primary text-dark')
   
   // cargar enseguida los comentarios para evitar problemas de asincronia
 
@@ -96,15 +96,16 @@ function createCard(comment, score) {
 }
 
 function pickColor(card, score) {
+  let defClass = "card col-2 btn overflow-auto";
   if (score > 0.8) {
-    card.addClass('card col-2 btn btn-success overflow-auto h-25 text-success bg-success');
+    card.addClass(`${defClass} btn-success text-success bg-success`);
   } if(score<0.2) {
-    card.addClass(' overflow-auto card col-2 h-25 btn btn-danger text-danger bg-danger')
+    card.addClass(`${defClass} btn-danger text-danger bg-danger`)
   }if(score>=0.21 && score<=0.4){
-    card.addClass('card col-2 btn btn-info overflow-auto h-25 text-info bg-info');
+    card.addClass(`${defClass} btn-info text-info bg-info`);
   }if(score>=0.4 && score<=0.6){
-    card.addClass('card col-2 btn btn-primary overflow-auto h-25 text-primary bg-primary');
+    card.addClass(`${defClass} btn-primary text-primary bg-primary`);
   }else{
-    card.addClass('card col-2 btn btn-secondary overflow-auto h-25 text-secondary bg-secondary');
+    card.addClass(`${defClass} btn-secondary text-secondary bg-secondary`);
   }
 }
