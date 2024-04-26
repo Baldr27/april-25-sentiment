@@ -7,10 +7,71 @@
     border-radius: 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+    color: grey!important;
   }
   
   .card:hover {
     transform: translateY(-5px);
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
     color: black!important;
+  }
+
+  #inputLink{
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+  }
+
+  #loadButton{
+    position: fixed;
+    bottom: 10px;
+    left: 240px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+  }
+
+  #scoreButton{
+    position: fixed;
+    bottom: 10px;
+    left: 350px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+  }
+
+  #prevButton{
+    position: fixed;
+    bottom: 10px;
+    left: 350px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+    width: 130px;
+  }
+
+  #nextButton{
+    position: fixed;
+    bottom: 10px;
+    left: 490px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+    width: 130px;
+  }
+
+  #pageLabel{
+    position: fixed;
+    bottom: 15px;
+    left: 640px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+    background-color: grey;
+  }
+
+  #pageNumber{
+    position: fixed;
+    bottom: 15px;
+    left: 690px;
+    z-index: 1;
+    box-shadow: 1px 1px;
+    background-color: grey;
   }

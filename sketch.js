@@ -6,40 +6,52 @@ let sentimentResult;
 let prediction;
 let dibujar = true;
 let apiRequest;
-let comentarios = [];
+let commits = [];
 let inputLink;
 let loadButton;
-let comentariosAnalizados = [];
+let commitsAnalizados = [];
+let nextButton;
+let prevButton;
+let page = 0;
 
 const getData = async () => {
-  fillLink(inputLink.value());
+  commits = [];
+  commitsAnalizados = [];
+  select('#cardRow').html('');
+  const inputValue = inputLink.value();
+  const parts = inputValue.split('/');
+  const author = parts[3];
+  const repo = parts[4];
+  fillLink(author, repo, page);
   const response = await fetch(apiRequest);
   const data = await response.json();
 
   // validar para ver  si la respuesta contiene datos
-  if (data.items && data.items.length > 0) {
+  if (data && data.length > 0) {
     // agregar de a uno los commentarios uwu
-    data.items.forEach(comment => {
-      comentarios.push({ texto: comment.snippet.topLevelComment.snippet.textDisplay });
+    data.forEach(commit => {
+      commits.push({ texto: commit.commit.message });
     });
-    //console.log('Comentarios agregados:', comentarios);
   } else {
-    console.log('No se encontraron comentarios.');
+    console.log('No se encontraron commits.');
   }
+  analyzeCommitsSentiments();
 }
 
-function fillLink(id){
-  apiRequest = 'https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId='+id+'&key=AIzaSyDZ9MqeC6ebJXBJNY5X1kACBpHCmUaJtCM&order=relevance';
+function fillLink(author, repo, page){
+  apiRequest = `https://api.github.com/repos/${author}/${repo}/commits?page=${page}`;
 }
 
 function setup() {
   noCanvas();
   sentiment = ml5.sentiment('movieReviews', modelReady);
   statusEl = createP('Loading Model...');
-  inputLink = createInput('Id de video');
-  videoId = inputLink.value;
-  loadButton=createButton('Cargar video')
-  loadButton.addClass('btn btn-outline-success text-dark')
+  inputLink = createInput('Repo link');
+  inputLink.id('inputLink');
+  repoLink = inputLink.value;
+  loadButton=createButton('Load Repo')
+  loadButton.id('loadButton');
+  loadButton.addClass('btn bg-success btn-outline-success text-dark')
   loadButton.mousePressed(async function(){
     try {
       await getData();
@@ -47,26 +59,58 @@ function setup() {
       console.log(error);
     }
   })
-  scoreButton = createButton('Obtener puntajes');
-  scoreButton.mousePressed(analizeCommentsSentiments);
-  scoreButton.addClass('btn btn-outline-primary text-dark')
+  // scoreButton = createButton('Get Analysis');
+  // scoreButton.id('scoreButton');
+  // scoreButton.mousePressed(analyzeCommitsSentiments);
+  // scoreButton.addClass('btn bg-primary btn-outline-primary text-dark')
   
-  // cargar enseguida los comentarios para evitar problemas de asincronia
+  nextButton = createButton('Next Page');
+  nextButton.id('nextButton');
+  nextButton.addClass('btn bg-primary btn-outline-grey text-dark')
+  nextButton.mousePressed(async function(){
+    page = page + 1;
+    console.log(page);
+    try{
+      await getData();
+      updatePageNumber();
+    }catch (error){
+      console.log(error);
+    }
+  })
+  prevButton = createButton('Previous Page');
+  prevButton.id('prevButton');
+  prevButton.addClass('btn bg-primary btn-outline-grey text-dark')
+  prevButton.mousePressed(async function(){
+    page = page - 1;
+    console.log(page);
+    try{
+      await getData();
+      updatePageNumber();
+    }catch (error){
+      console.log(error);
+    }
+  })
 
+  createSpan('Page: ').id('pageLabel');
+  createSpan().id('pageNumber');
 }
 
-function analizeCommentsSentiments() {
+function updatePageNumber(){
+  select('#pageNumber').html(page);
+}
+
+function analyzeCommitsSentiments() {
   dibujar = true;
-  for (let i = 0; i < comentarios.length; i++) {
-    getSentiment(comentarios[i].texto);
+  for (let i = 0; i < commits.length; i++) {
+    getSentiment(commits[i].texto);
   }
 }
 
 
-function getSentiment(comment) {
-  prediction = sentiment.predict(comment);
-  console.log("Comentario: " + comment + " Puntaje: " + prediction.score);
-  comentariosAnalizados.push({ comentario: comment, puntaje: prediction.score });
+function getSentiment(commit) {
+  prediction = sentiment.predict(commit);
+  console.log("Commit: " + commit + " Puntaje: " + prediction.score);
+  commitsAnalizados.push({ commit: commit, puntaje: prediction.score });
 }
 
 function modelReady() {
@@ -75,37 +119,35 @@ function modelReady() {
 
 function draw() {
   if (dibujar == true) {
-    for (let i = 0; i < comentariosAnalizados.length; i++) {
-      createCard(comentariosAnalizados[i].comentario, comentariosAnalizados[i].puntaje);
+    for (let i = 0; i < commitsAnalizados.length; i++) {
+      createCard(commitsAnalizados[i].commit, commitsAnalizados[i].puntaje);
     }
-    console.log(dibujar)
     dibujar = false;
-    console.log(dibujar)
   }
 
 }
 
-function createCard(comment, score) {
+function createCard(commit, score) {
   let card = createDiv('');
   pickColor(card, score);
   let scoreText = createP(`Puntaje: ${score}`);
   scoreText.parent(card);
-  let commentText = createP(comment);
-  commentText.parent(card);
+  let commitText = createP(commit);
+  commitText.parent(card);
   card.parent("#cardRow")
 }
 
 function pickColor(card, score) {
   let defClass = "card col-2 btn overflow-auto";
   if (score > 0.8) {
-    card.addClass(`${defClass} btn-success text-success bg-success`);
+    card.addClass(`${defClass} btn-success bg-success`);
   } if(score<0.2) {
-    card.addClass(`${defClass} btn-danger text-danger bg-danger`)
+    card.addClass(`${defClass} btn-danger bg-danger`)
   }if(score>=0.21 && score<=0.4){
-    card.addClass(`${defClass} btn-info text-info bg-info`);
+    card.addClass(`${defClass} btn-info bg-info`);
   }if(score>=0.4 && score<=0.6){
-    card.addClass(`${defClass} btn-primary text-primary bg-primary`);
+    card.addClass(`${defClass} btn-primary bg-primary`);
   }else{
-    card.addClass(`${defClass} btn-secondary text-secondary bg-secondary`);
+    card.addClass(`${defClass} btn-secondary bg-secondary`);
   }
 }
