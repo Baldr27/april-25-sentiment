@@ -18,7 +18,7 @@ let commitEsxtendidosAnalizados = [];
 let token = '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';
 
 const headers= {
-  'Authorization':`token ${token}`,
+  'Authorization':`${token}`,
   'Accept': 'application/json'
 };
 
