@@ -13,17 +13,30 @@ let commitsAnalizados = [];
 let nextButton;
 let prevButton;
 let page = 0;
+let commitsExtendidos= [];
+let commitEsxtendidosAnalizados = [];
+let token = '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';
+
+const headers= {
+  'Authorization':`token ${token}`,
+  'Accept': 'application/json'
+};
 
 const getData = async () => {
   commits = [];
   commitsAnalizados = [];
+  commitsExtendidos = [];
+  commitEsxtendidosAnalizados = [];
   select('#cardRow').html('');
   const inputValue = inputLink.value();
   const parts = inputValue.split('/');
   const author = parts[3];
   const repo = parts[4];
   fillLink(author, repo, page);
-  const response = await fetch(apiRequest);
+  const response = await fetch(apiRequest, {
+    method:'GET',
+    headers:headers
+  });
   const data = await response.json();
 
   // validar para ver  si la respuesta contiene datos
@@ -59,11 +72,7 @@ function setup() {
       console.log(error);
     }
   })
-  // scoreButton = createButton('Get Analysis');
-  // scoreButton.id('scoreButton');
-  // scoreButton.mousePressed(analyzeCommitsSentiments);
-  // scoreButton.addClass('btn bg-primary btn-outline-primary text-dark')
-  
+
   nextButton = createButton('Next Page');
   nextButton.id('nextButton');
   nextButton.addClass('btn bg-primary btn-outline-grey text-dark')
@@ -102,15 +111,16 @@ function updatePageNumber(){
 function analyzeCommitsSentiments() {
   dibujar = true;
   for (let i = 0; i < commits.length; i++) {
-    getSentiment(commits[i].texto);
+    getSentiment(commits[i].texto,commitsExtendidos.texto);
   }
 }
 
 
-function getSentiment(commit) {
+function getSentiment(commit,commitExtendido) {
   prediction = sentiment.predict(commit);
-  console.log("Commit: " + commit + " Puntaje: " + prediction.score);
   commitsAnalizados.push({ commit: commit, puntaje: prediction.score });
+  prediction = sentiment.predict(commitExtendido);
+  commitEsxtendidosAnalizados.push({commitExtendido: commitExtendido, puntaje: prediction.score})
 }
 
 function modelReady() {
@@ -120,25 +130,30 @@ function modelReady() {
 function draw() {
   if (dibujar == true) {
     for (let i = 0; i < commitsAnalizados.length; i++) {
-      createCard(commitsAnalizados[i].commit, commitsAnalizados[i].puntaje);
+      createCard(commitsAnalizados[i].commit, commitsAnalizados[i].puntaje,normal);
+      createCard(commitsExtendidos[i].commitExtendido,commitEsxtendidosAnalizados[i].puntaje,extendido);
     }
     dibujar = false;
   }
 
 }
 
-function createCard(commit, score) {
+function createCard(commit, score, tipo) {
   let card = createDiv('');
   pickColor(card, score);
   let scoreText = createP(`Puntaje: ${score}`);
   scoreText.parent(card);
   let commitText = createP(commit);
   commitText.parent(card);
-  card.parent("#cardRow")
+  if(tipo===normal){
+  card.parent("#commitNormal")
+  }else{
+    card.parent("#commitExtendido")
+  }
 }
 
 function pickColor(card, score) {
-  let defClass = "card col-2 btn overflow-auto";
+  let defClass = "card row btn overflow-auto";
   if (score > 0.8) {
     card.addClass(`${defClass} btn-success bg-success text-success`);
   } if(score<0.2) {
