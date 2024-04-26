@@ -140,14 +140,14 @@ function createCard(commit, score) {
 function pickColor(card, score) {
   let defClass = "card col-2 btn overflow-auto";
   if (score > 0.8) {
-    card.addClass(`${defClass} btn-success bg-success`);
+    card.addClass(`${defClass} btn-success bg-success text-success`);
   } if(score<0.2) {
-    card.addClass(`${defClass} btn-danger bg-danger`)
+    card.addClass(`${defClass} btn-danger bg-danger text-danger`)
   }if(score>=0.21 && score<=0.4){
-    card.addClass(`${defClass} btn-info bg-info`);
+    card.addClass(`${defClass} btn-info bg-info text-info`);
   }if(score>=0.4 && score<=0.6){
-    card.addClass(`${defClass} btn-primary bg-primary`);
+    card.addClass(`${defClass} btn-primary bg-primary text-primary`);
   }else{
-    card.addClass(`${defClass} btn-secondary bg-secondary`);
+    card.addClass(`${defClass} btn-secondary bg-secondary text-secondary`);
   }
 }
